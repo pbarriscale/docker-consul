@@ -1,8 +1,8 @@
 FROM 		progrium/busybox
 MAINTAINER 	Jeff Lindsay <progrium@gmail.com>
 
-ADD https://dl.bintray.com/mitchellh/consul/0.4.1_linux_amd64.zip /tmp/consul.zip
-RUN cd /bin && unzip /tmp/consul.zip && chmod +x /bin/consul && rm /tmp/consul.zip
+ADD https://github.com/sequenceiq/consul/releases/download/v0.4.1.ptr/consul /bin/consul
+RUN chmod +x /bin/consul
 
 ADD https://dl.bintray.com/mitchellh/consul/0.4.1_web_ui.zip /tmp/webui.zip
 RUN cd /tmp && unzip /tmp/webui.zip && mv dist /ui && rm /tmp/webui.zip
