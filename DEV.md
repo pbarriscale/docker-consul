@@ -11,7 +11,7 @@ $ BRIDGE_IP=$(docker run --rm debian:jessie ip ro | grep default | cut -d" " -f 
 $ docker run -d \
     -h node1 \
     --name=consul \
-    -p ${BRIDGE_IP}:53:53/udp 
+    -p ${BRIDGE_IP}:53:53/udp \
     sequenceiq/consul:v0.4.1.ptr -server -bootstrap
 ```
 
@@ -58,6 +58,17 @@ hand editing, here is the one-liner:
 ```
 boot2docker ssh sudo "sed '$ a\EXTRA_ARGS=\"\$EXTRA_ARGS --dns=$BRIDGE_IP --dns=8.8.8.8 --dns-search=node.consul --dns-search=service.consul\"' /var/lib/boot2docker/profile"
 boot2docker restart
+```
+
+## Registrator
+
+The next component to add to the secret sauce is [registrator](https://github.com/progrium/registrator)
+
+```
+docker run -d \
+  --name=registrator \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  progrium/registrator consul://${BRIDGE_IP}
 ```
 
 # tl;dr
