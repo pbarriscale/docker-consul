@@ -12,6 +12,8 @@ $ docker run -d \
     -h node1 \
     --name=consul \
     -p ${BRIDGE_IP}:53:53/udp \
+    -p ${BRIDGE_IP}:8400:8400 \
+    -p ${BRIDGE_IP}:8500:8500 \
     sequenceiq/consul:v0.4.1.ptr -server -bootstrap
 ```
 
@@ -63,12 +65,19 @@ boot2docker restart
 ## Registrator
 
 The next component to add to the secret sauce is [registrator](https://github.com/progrium/registrator)
+This will automatically register docker containers as services into consul. Registrator attaches to
+docker event stream,
 
 ```
 docker run -d \
   --name=registrator \
   -v /var/run/docker.sock:/tmp/docker.sock \
-  progrium/registrator consul://${BRIDGE_IP}
+  progrium/registrator consul://${BRIDGE_IP}:8500
+```
+
+##
+```
+docker run -d --name="postgresql" -p 5432:5432 postgres
 ```
 
 # tl;dr
