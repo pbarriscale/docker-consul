@@ -1,25 +1,40 @@
+# Docker, dig, consul
+
+This is a description on how to use [Consul](https://www.consul.io) in Docker so that it can serv other containers,
+as a DNS server.
+
+## start consul
 
 To start a consul container locally on boot2docker:
-
 ```
-BRIDGE_IP=$()
+BRIDGE_IP=$(docker run --rm debian:jessie ip ro | grep default | cut -d" " -f 3)
 docker run -d -h node1 --name=consul -p ${BRIDGE_IP}:53:53/udp sequenceiq/consul:v0.4.1.ptr -server -bootstrap
-
 ```
 
-## dig
+## Using consul as dns server in containers
 
-dig command alias to show **query** and **answer** sections only
+Now you can start other containers which uses consul as DNS server 
 ```
-alias dd='dig +serach +nocmd +noall +answer +que'
+docker run -it --rm \
+  --dns=$BRIDGE_IP \
+  --dns=8.8.8.8 \
+  --dns-search=node.consul \
+  --dns-search=service.consul 
+  debian:jessie
 ```
 
-dig command alias tp produce the minimal output (cli-fu)
+If you want that all future containers use the dns and dns-search settings, you have to add the 
+following options to docker daemon:
+`--dns=<BRIDGE_IP> --dns=8.8.8.8 --dns-search=node.consul --dns-search=service.consul`
+
+For boot2docker you can use the `EXTRA_ARGS` env variable in `/var/lib/boot2docker/profile`. Instead of
+hand editing, here is the one-liner:
 ```
-alias d='dig +serach +short'
+boot2docker ssh sudo "sed '$ a\EXTRA_ARGS=\"\$EXTRA_ARGS --dns=$BRIDGE_IP --dns=8.8.8.8 --dns-search=node.consul --dns-search=service.consul\"' /var/lib/boot2docker/profile"
+boot2docker restart
 ```
 
-## /etc/resolv.conf
+## Understanding /etc/resolv.conf
 
 ```
 nameserver 172.19.0.1
@@ -45,3 +60,13 @@ dig doesn't honors **search** domanis by default, you have to force it with the 
 $ dig +search consul +short
 172.19.0.18
 ```
+
+## dig aliases
+
+The firs alias to show **query** and **answer** sections only.
+The second alias produces the minimal output (cli-fu) with dns-search enabled.
+```
+alias digq='dig +search +nocmd +noall +answer +que'
+alias digs='dig +search +short'
+```
+
