@@ -75,9 +75,17 @@ docker run -d \
   progrium/registrator consul://${BRIDGE_IP}:8500
 ```
 
-##
+## Starting autoregistered services
+
+Now if we start a postgres container, it will be automatically registered, because it exposes a port:
 ```
 docker run -d --name="postgresql" -p 5432:5432 postgres
+```
+
+To check that it's registered query the whole consul catalog:
+
+```
+docker run -it  sequenceiq/busybox bash -c 'curl -s 172.19.0.1:8500/v1/catalog/services|jq .'
 ```
 
 # tl;dr
