@@ -8,7 +8,11 @@ as a DNS server.
 To start a consul container locally on boot2docker:
 ```
 BRIDGE_IP=$(docker run --rm debian:jessie ip ro | grep default | cut -d" " -f 3)
-docker run -d -h node1 --name=consul -p ${BRIDGE_IP}:53:53/udp sequenceiq/consul:v0.4.1.ptr -server -bootstrap
+docker run -d \
+  -h node1 \
+  --name=consul \
+  -p ${BRIDGE_IP}:53:53/udp 
+  sequenceiq/consul:v0.4.1.ptr -server -bootstrap
 ```
 
 ## Using consul as dns server in containers
