@@ -79,7 +79,12 @@ docker run -d \
 
 Now if we start a postgres container, it will be automatically registered, because it exposes a port:
 ```
-docker run -d --name="postgresql" -p 5432:5432 postgres
+docker run -d \
+  --name="postgresql" \
+  -e "SERVICE_NAME=db" \
+  -e "SERVICE_TAGS=master,backups" \
+  -p 5432:5432 \
+  postgres
 ```
 
 To check that it's registered query the whole consul catalog:
