@@ -15,6 +15,30 @@ docker run -d \
   sequenceiq/consul:v0.4.1.ptr -server -bootstrap
 ```
 
+In that container you are able to get the consul A record via the DNS api
+```
+dig consul.service.consul
+```
+
+Getting the members via the HTTP api:
+```
+curl $(dig consul.service.consul +short):8500/v1/agent/members|jq .
+```
+
+To see the logs of the consul containers:
+```
+$ docker logs consul
+==> Consul agent running!
+         Node name: 'node1'
+        Datacenter: 'dc1'
+            Server: true (bootstrap: true)
+       Client Addr: 0.0.0.0 (HTTP: 8500, DNS: 53, RPC: 8400)
+      Cluster Addr: 172.19.0.4 (LAN: 8301, WAN: 8302)
+    Gossip encrypt: false, RPC-TLS: false, TLS-Incoming: false
+
+```
+
+
 ## Using consul as dns server in containers
 
 Now you can start other containers which uses consul as DNS server 
@@ -23,8 +47,8 @@ docker run -it --rm \
   --dns=$BRIDGE_IP \
   --dns=8.8.8.8 \
   --dns-search=node.consul \
-  --dns-search=service.consul 
-  debian:jessie
+  --dns-search=service.consul \
+  sequenceiq/busybox
 ```
 
 If you want that all future containers use the dns and dns-search settings, you have to add the 
