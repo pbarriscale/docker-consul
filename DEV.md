@@ -7,26 +7,23 @@ as a DNS server.
 
 To start a consul container locally on boot2docker:
 ```
-BRIDGE_IP=$(docker run --rm debian:jessie ip ro | grep default | cut -d" " -f 3)
-docker run -d \
-  -h node1 \
-  --name=consul \
-  -p ${BRIDGE_IP}:53:53/udp 
-  sequenceiq/consul:v0.4.1.ptr -server -bootstrap
+$ BRIDGE_IP=$(docker run --rm debian:jessie ip ro | grep default | cut -d" " -f 3)
+$ docker run -d \
+    -h node1 \
+    --name=consul \
+    -p ${BRIDGE_IP}:53:53/udp 
+    sequenceiq/consul:v0.4.1.ptr -server -bootstrap
 ```
 
-To see the logs of the consul containers:
+To see that its started up:
 ```
-$ docker logs consul
-==> Consul agent running!
-         Node name: 'node1'
-        Datacenter: 'dc1'
-            Server: true (bootstrap: true)
-       Client Addr: 0.0.0.0 (HTTP: 8500, DNS: 53, RPC: 8400)
-      Cluster Addr: 172.19.0.4 (LAN: 8301, WAN: 8302)
-    Gossip encrypt: false, RPC-TLS: false, TLS-Incoming: false
+$ docker exec -it consul consul members
 
+Node   Address          Status  Type    Build     Protocol
+node1  172.19.0.4:8301  alive   server  0.4.1ptr  2
 ```
+
+To see the logs of the consul use: `docker logs consul`
 
 ## Using consul as dns server in containers
 
