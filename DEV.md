@@ -15,16 +15,6 @@ docker run -d \
   sequenceiq/consul:v0.4.1.ptr -server -bootstrap
 ```
 
-In that container you are able to get the consul A record via the DNS api
-```
-dig consul.service.consul
-```
-
-Getting the members via the HTTP api:
-```
-curl $(dig consul.service.consul +short):8500/v1/agent/members|jq .
-```
-
 To see the logs of the consul containers:
 ```
 $ docker logs consul
@@ -38,7 +28,6 @@ $ docker logs consul
 
 ```
 
-
 ## Using consul as dns server in containers
 
 Now you can start other containers which uses consul as DNS server 
@@ -51,6 +40,18 @@ docker run -it --rm \
   sequenceiq/busybox
 ```
 
+In that container you are able to get the consul A record via the DNS api
+```
+dig consul.service.consul
+```
+
+Getting the members via the HTTP api:
+```
+curl $(dig consul.service.consul +short):8500/v1/agent/members|jq .
+```
+
+##
+
 If you want that all future containers use the dns and dns-search settings, you have to add the 
 following options to docker daemon:
 `--dns=<BRIDGE_IP> --dns=8.8.8.8 --dns-search=node.consul --dns-search=service.consul`
@@ -61,6 +62,10 @@ hand editing, here is the one-liner:
 boot2docker ssh sudo "sed '$ a\EXTRA_ARGS=\"\$EXTRA_ARGS --dns=$BRIDGE_IP --dns=8.8.8.8 --dns-search=node.consul --dns-search=service.consul\"' /var/lib/boot2docker/profile"
 boot2docker restart
 ```
+
+# tl;dr
+
+If you want to know the fine details read on ...
 
 ## Understanding /etc/resolv.conf
 
