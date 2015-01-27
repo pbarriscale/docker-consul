@@ -24,7 +24,7 @@ VOLUME ["/data"]
 
 ENV SHELL /bin/bash
 
-COPY ./local-cluster /bin/local-cluster
+#COPY ./local-cluster /bin/local-cluster
 
 ENTRYPOINT ["/bin/start"]
 CMD []
