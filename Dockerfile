@@ -25,6 +25,9 @@ ADD ./check-cmd /bin/check-cmd
 EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 53 53/udp
 VOLUME ["/data"]
 
+RUN mkdir -p /var/log/consul
+ENV CONSUL_LOG_FILE /var/log/consul/consul.log
+
 ENV SHELL /bin/bash
 
 ENTRYPOINT ["/bin/start"]
