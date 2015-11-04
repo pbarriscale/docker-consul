@@ -3,6 +3,16 @@
 readonly IMAGE="progrium/consul"
 readonly EXPECT="${EXPECT:-3}"
 
+get-recursors() {
+	grep "nameserver" /etc/resolv.conf | awk '{print $2}';
+}
+
+configure-recursors() {
+	for recursor in $(get-recursors); do
+    		sed -i '/^.*disable_update_check.*$/ i\        "recursor": "'$recursor'",' /config/consul.json;
+	done
+}
+
 cmd-run() {
 	local ip_def="$1"; shift
 	local args="$@"
@@ -38,11 +48,16 @@ eval docker run --name consul -h \$HOSTNAME \
 EOF
 }
 
+run-agent() {
+	configure-recursors
+	exec /bin/consul agent -config-dir=/config $@ | tee -a $CONSUL_LOG_FILE
+}
+
 main() {
 	set -eo pipefail
 	case "$1" in
 	cmd:run)            shift; cmd-run $@;;
-	*)                  exec /bin/consul agent -config-dir=/config $@ | tee -a $CONSUL_LOG_FILE;;
+	*)                  run-agent $@;;
 	esac
 }
 
