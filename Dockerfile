@@ -4,10 +4,10 @@ RUN apk --update add curl bash ca-certificates && \
     apk add --allow-untrusted /tmp/glibc-2.21-r2.apk && \
     rm -rf /tmp/glibc-2.21-r2.apk /var/cache/apk/*
 
-ADD https://dl.bintray.com/mitchellh/consul/0.5.0_linux_amd64.zip /tmp/consul.zip
+ADD https://releases.hashicorp.com/consul/0.5.0/consul_0.5.0_linux_amd64.zip /tmp/consul.zip
 RUN cd /bin && unzip /tmp/consul.zip && chmod +x /bin/consul && rm /tmp/consul.zip
 
-ADD https://dl.bintray.com/mitchellh/consul/0.5.0_web_ui.zip /tmp/webui.zip
+ADD https://releases.hashicorp.com/consul/0.5.0/consul_0.5.0_web_ui.zip /tmp/webui.zip
 RUN mkdir /ui && cd /ui && unzip /tmp/webui.zip && rm /tmp/webui.zip && mv dist/* . && rm -rf dist
 
 ADD https://get.docker.io/builds/Linux/x86_64/docker-1.5.0 /bin/docker
